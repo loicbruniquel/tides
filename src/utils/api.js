@@ -31,13 +31,17 @@ export let user = {
     return LocalStorage.getItem(STORAGE_KEY_TOKEN)
   },
 
+  async get () {
+    return (await apiClient.get('/users/me')).data
+  },
+
   async login (email, password) {
     let resp = await apiClient.post('/auth/local', {
       identifier: email,
       password
     })
     this.setToken(resp.data.jwt)
-    return resp
+    return resp.data
   },
 
   async register (email, password) {

@@ -1,6 +1,7 @@
 <template>
   <q-page class="">
-     <q-btn label="Add station" to="/stations/new" />
+    <h2>Stations</h2>
+    <q-btn outline round color="primary" icon="add" to="/stations/new" />
     <StationList />
   </q-page>
 </template>

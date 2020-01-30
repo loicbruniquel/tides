@@ -1,6 +1,6 @@
 <template>
   <q-page class="">
-    <h1>Station</h1>
+    <h2>Station</h2>
     <pre>{{station}}</pre>
   </q-page>
 </template>

@@ -1,6 +1,6 @@
 <template>
   <q-page class="">
-    <h2>Edit station</h2>
+    <h2>New station</h2>
     <StationForm v-model="station" v-if="station" @save="save" />
   </q-page>
 </template>
@@ -16,19 +16,20 @@ export default {
   },
   data () {
     return {
-      station: null
+      station: {
+        name: 'SomeWhere',
+        latitude: '-4',
+        longitude: '23'
+      }
     }
   },
   methods: {
     async save (stationData) {
       this.$q.loading.show()
-      await stationsApi.update(this.$route.params.stationId, stationData)
+      let newStation = await stationsApi.create(stationData)
       this.$q.loading.hide()
       this.$router.push('/')
     }
-  },
-  async mounted () {
-    this.station = await stationsApi.get(this.$route.params.stationId)
   }
 }
 </script>
