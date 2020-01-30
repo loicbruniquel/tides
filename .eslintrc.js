@@ -52,6 +52,7 @@ module.exports = {
     'camelcase': 'off',
     'standard/no-callback-literal': 'off',
     'vue/no-use-v-if-with-v-for': 'off',
+    'vue/no-unused-components': 'off',
 
     // allow debugger during development only
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',

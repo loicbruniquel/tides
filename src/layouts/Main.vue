@@ -1,17 +1,13 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
+  <q-layout class="main-container lHh Lpr lFf">
     <q-page-container>
-      <header>
+
+      <header class="header flex items-center q-pa-md">
         <q-btn outline round color="primary" icon="home" to="/" />
-      </header>
-      <div v-if="user">
+        <q-space />
         <MiniUser />
-      </div>
-      <div v-if="!user" class="flex q-gutter-md">
-        <span>Tides</span>
-        <q-btn label="Login" to="/user/login" />
-        <q-btn label="Create account" to="/user/register" />
-      </div>
+      </header>
+
       <router-view />
     </q-page-container>
   </q-layout>
@@ -41,3 +37,13 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.main-container {
+  background-color: #efefef;
+}
+
+.header {
+  background-color: white;
+}
+</style>

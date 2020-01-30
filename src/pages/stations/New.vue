@@ -1,12 +1,12 @@
 <template>
-  <q-page class="">
-    <h2>New station</h2>
+  <div class="">
     <StationForm v-model="station" v-if="station" @save="save" />
-  </q-page>
+  </div>
 </template>
 
 <script>
 import { stations as stationsApi } from 'src/utils/api'
+
 import StationForm from 'components/stations/Form.vue'
 
 export default {
@@ -17,9 +17,9 @@ export default {
   data () {
     return {
       station: {
-        name: 'SomeWhere',
-        latitude: '-4',
-        longitude: '23'
+        name: null,
+        latitude: 33.92,
+        longitude: -7.42
       }
     }
   },

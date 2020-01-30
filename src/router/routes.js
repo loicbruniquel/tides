@@ -1,5 +1,6 @@
 
 const routes = [
+
   {
     path: '/',
     component: () => import('layouts/Main.vue'),
@@ -9,11 +10,19 @@ const routes = [
       { path: 'user/login', component: () => import('pages/user/Login.vue') },
       { path: 'user/register', component: () => import('pages/user/Register.vue') },
 
+      { path: 'stations/:stationId(\\d+)', component: () => import('pages/stations/View.vue') }
+    ]
+  },
+
+  {
+    path: '/',
+    component: () => import('layouts/FullScreen.vue'),
+    children: [
       { path: 'stations/new', component: () => import('pages/stations/New.vue') },
-      { path: 'stations/:stationId/edit', component: () => import('pages/stations/Edit.vue') },
-      { path: 'stations/:stationId', component: () => import('pages/stations/View.vue') }
+      { path: 'stations/:stationId/edit', component: () => import('pages/stations/Edit.vue') }
     ]
   }
+
 ]
 
 // Always leave this as last one

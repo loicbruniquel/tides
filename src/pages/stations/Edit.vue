@@ -1,8 +1,7 @@
 <template>
-  <q-page class="">
-    <h2>Edit station</h2>
+  <div class="">
     <StationForm v-model="station" v-if="station" @save="save" />
-  </q-page>
+  </div>
 </template>
 
 <script>
