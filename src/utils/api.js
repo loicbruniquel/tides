@@ -66,3 +66,9 @@ export let stations = {
     return (await apiClient.put(`stations/${stationId}`, data)).data
   }
 }
+
+export let tides = {
+  async getData (stationId, day) {
+    return (await apiClient.get(`stations/${stationId}/tides/${day}`)).data
+  }
+}
