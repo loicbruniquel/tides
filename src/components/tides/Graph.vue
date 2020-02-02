@@ -8,21 +8,46 @@
       viewBox="0 0 100 100"
       preserveAspectRatio="none"
       class="graph">
-      <path :d="svgPath" fill="transparent" stroke="red" stroke-width="3" vector-effect="non-scaling-stroke" />
+
+      <path
+        :d="svgPath(heightData)"
+        fill="transparent"
+        stroke="red"
+        stroke-width="3"
+        vector-effect="non-scaling-stroke" />
+
       <ellipse
         v-for="point in extremeData"
         :key="`${point.x}-${[point.y]}`"
-        :cx="getPercentValue(point.x, minX, maxX)"
-        :cy="getPercentValue(point.y, minY, maxY)"
+        :cx="point.x"
+        :cy="point.y"
         :rx="dotRadius"
         :ry="dotHeight"
-        stroke-width="0" fill="blue" />
+        stroke-width="0"
+        fill="blue" />
+
+      <ellipse
+        :cx="mousePosition"
+        :cy="mouseValue.y"
+        :rx="dotRadius"
+        :ry="dotHeight"
+        stroke-width="0"
+        fill="green" />
+
+      <rect
+        @mousemove.self="mouseMouse"
+        @mouseleave.self="mousePosition = null"
+        width="100"
+        height="100"
+        fill="transparent" />
+
     </svg>
+
   </div>
 </template>
 
 <script>
-import { svgPath, getPercentValue } from 'src/utils/plot'
+import { svgPath, getPercentValue, convertedValues, yForX } from 'src/utils/plot'
 
 export default {
   name: 'TideGraph',
@@ -31,28 +56,26 @@ export default {
   },
   data () {
     return {
-      svgDimensions: { x: 0, y: 0 }
+      svgDimensions: { x: 0, y: 0 },
+      mousePosition: null
     }
   },
   computed: {
-    svgPath () {
-      return svgPath(this.heightData, this.minX, this.maxX, this.minY, this.maxY)
-    },
     heightData () {
-      return this.tides.heights.map(height => {
+      return this.convertedPoints(this.tides.heights.map(height => {
         return { x: height.dt, y: height.height }
-      })
+      }))
     },
     extremeData () {
-      return this.tides.extremes.map(extreme => {
+      return this.convertedPoints(this.tides.extremes.map(extreme => {
         return { x: extreme.dt, y: extreme.height }
-      })
+      }))
     },
     minX () {
-      return this.heightData[0].x
+      return this.tides.heights[0].dt
     },
     maxX () {
-      return this.heightData[this.heightData.length - 1].x
+      return this.tides.heights[this.tides.heights.length - 1].dt
     },
     minY () {
       return this.tides.datums.find(datum => datum.name === 'HAT').height
@@ -68,13 +91,24 @@ export default {
     },
     svgAspectRatio () {
       return this.svgDimensions.w / this.svgDimensions.h
+    },
+    mouseValue () {
+      return yForX(this.heightData, this.mousePosition)
     }
   },
   methods: {
+    svgPath,
     getPercentValue,
     handleResize (event) {
       this.svgDimensions = { w: this.$refs.svgGraph.clientWidth, h: this.$refs.svgGraph.clientHeight }
-      console.log(this.aspectRatio)
+    },
+    mouseMouse (event) {
+      let rect = event.target.getBoundingClientRect()
+      let xPos = event.clientX - rect.left
+      this.mousePosition = xPos / rect.width * 100
+    },
+    convertedPoints (points) {
+      return convertedValues(points, this.minX, this.maxX, this.minY, this.maxY)
     }
   },
   mounted () {
@@ -100,6 +134,6 @@ export default {
   height: 600px;
 }
 .graph {
-background-color: white;
+  background-color: #efefef;
 }
 </style>

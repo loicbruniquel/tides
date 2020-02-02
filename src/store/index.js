@@ -8,12 +8,16 @@ Vue.use(Vuex)
 export default function () {
   const Store = new Vuex.Store({
     state: {
-      user: null
+      user: null,
+      pageTitle: null
     },
 
     mutations: {
       user (state, user) {
         state.user = user
+      },
+      pageTitle (state, title) {
+        state.pageTitle = title
       }
     },
 

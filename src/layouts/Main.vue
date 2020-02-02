@@ -4,7 +4,7 @@
 
       <header class="header flex items-center q-pa-md">
         <q-btn outline round color="primary" icon="home" to="/" />
-        <q-space />
+        <h2 class="page-title">{{$store.state.pageTitle}}</h2>
         <MiniUser />
       </header>
 
@@ -45,5 +45,11 @@ export default {
 
 .header {
   background-color: white;
+  h2 {
+    margin: 0;
+    flex: 1;
+    margin-left: 20px;
+    text-align: left;
+  }
 }
 </style>

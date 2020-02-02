@@ -1,5 +1,5 @@
 <template>
-  <div v-if="user" class="logged-in">
+  <div v-if="user" class="logged-in flex items-center q-gutter-md">
     <div class="email">{{user.email}}</div>
     <q-btn label="Logout" @click="$store.commit('logout')" />
   </div>

@@ -1,6 +1,5 @@
 <template>
-  <q-page class="">
-    <h2>Station</h2>
+  <q-page class="station" v-if="station">
     <TideGraph v-if="tidesData" :tides="tidesData" />
   </q-page>
 </template>
@@ -28,8 +27,16 @@ export default {
     }
   },
   async mounted () {
+    this.$store.commit('pageTitle', null)
     this.refreshTidesData()
     this.station = await stationsApi.get(this.$route.params.stationId)
+    this.$store.commit('pageTitle', this.station.name)
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.station {
+  padding: 0;
+}
+</style>

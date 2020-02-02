@@ -1,18 +1,6 @@
 const SMOOTH_RATIO = 0.2
 
 /**
- * Returns a percentage of the value in reference to the min and max values
- * @param {float} value
- * @param {float} minValue
- * @param {float} maxValue
- */
-export let getPercentValue = function (value, minValue, maxValue) {
-  let span = maxValue - minValue
-  let offset = value - minValue
-  return parseFloat(((offset / span) * 100).toFixed(2))
-}
-
-/**
  * Returns the properties (length and angle in radians) of the line between the two points
  * @param {object} pointA
  * @param {object} pointB
@@ -75,19 +63,37 @@ let bezierCommand = function (point, index, allPoints) {
 }
 
 /**
- * Returns a smoothed svg path string
- * @param {object} points Each point is an object with x and y coordinate
- * @param {float} minY
- * @param {float} maxY
- * @returns {string}
+* Returns a percentage of the value in reference to the min and max values
+* @param {float} value
+* @param {float} minValue
+* @param {float} maxValue
+*/
+export let getPercentValue = function (value, minValue, maxValue) {
+  let span = maxValue - minValue
+  let offset = value - minValue
+  return parseFloat(((offset / span) * 100).toFixed(2))
+}
+
+/**
+ * Returns the points with values converted to 0-100 coordinate system
+ * @param {array} points
  */
-export let svgPath = function (points, minX, maxX, minY, maxY) {
+export let convertedValues = function (points, minX, maxX, minY, maxY) {
   return points.map(point => {
     return {
       x: getPercentValue(point.x, minX, maxX),
       y: getPercentValue(point.y, minY, maxY)
     }
-  }).reduce((pathString, point, index, allPoints) => {
+  })
+}
+
+/**
+ * Returns a smoothed svg path string
+ * @param {object} points Each point is an object with x and y in a 0-100 coordinate system
+ * @returns {string}
+ */
+export let svgPath = function (points) {
+  return points.reduce((pathString, point, index, allPoints) => {
     if (index === 0) {
       // first point is move command
       return `M ${point.x},${point.y}`
@@ -96,4 +102,15 @@ export let svgPath = function (points, minX, maxX, minY, maxY) {
       return `${pathString} ${bezierCommand(point, index, allPoints)}`
     }
   }, '')
+}
+
+export let yForX = function (points, targetX) {
+  let afterIndex = points.findIndex(point => point.x > targetX)
+  let after = points[afterIndex]
+  let before = points[afterIndex - 1] || after
+  let ratioX = (targetX - before.x) / (after.x - before.x)
+  return {
+    x: targetX,
+    y: before.y + (after.y - before.y) * ratioX
+  }
 }
