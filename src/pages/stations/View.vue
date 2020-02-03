@@ -1,13 +1,13 @@
 <template>
   <q-page class="station" v-if="station">
-    <TideGraph v-if="tidesData" :tides="tidesData" />
+    <TideGraph v-if="tidesData" :tides="tidesData" @mouseHeight="mouseHeightChanged" />
   </q-page>
 </template>
 
 <script>
 import { stations as stationsApi, tides as tidesApi } from 'src/utils/api'
 
-import TideGraph from 'components/tides/Graph'
+import TideGraph from 'components/tides/Graph/Index'
 
 export default {
   name: 'StationView',
@@ -24,6 +24,9 @@ export default {
   methods: {
     async refreshTidesData () {
       this.tidesData = await tidesApi.getData(this.$route.params.stationId, this.day)
+    },
+    mouseHeightChanged (value) {
+      console.log(value)
     }
   },
   async mounted () {

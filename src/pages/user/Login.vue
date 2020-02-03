@@ -25,7 +25,7 @@ export default {
       try {
         userApi.setToken(null)
         let resp = await userApi.login(this.email, this.password)
-        this.$store.commit('user', resp.data.user)
+        this.$store.commit('user', resp.user)
         this.$router.push('/')
       } catch (error) {
         console.error(error)

@@ -74,6 +74,11 @@ export let getPercentValue = function (value, minValue, maxValue) {
   return parseFloat(((offset / span) * 100).toFixed(2))
 }
 
+export let getAbsoluteValue = function (percentValue, minValue, maxValue) {
+  let span = maxValue - minValue
+  return minValue + span * percentValue / 100
+}
+
 /**
  * Returns the points with values converted to 0-100 coordinate system
  * @param {array} points
@@ -109,8 +114,5 @@ export let yForX = function (points, targetX) {
   let after = points[afterIndex]
   let before = points[afterIndex - 1] || after
   let ratioX = (targetX - before.x) / (after.x - before.x)
-  return {
-    x: targetX,
-    y: before.y + (after.y - before.y) * ratioX
-  }
+  return (before.y + (after.y - before.y) * ratioX)
 }
