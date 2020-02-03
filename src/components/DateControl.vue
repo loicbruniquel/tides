@@ -61,9 +61,12 @@ export default {
 <style lang="scss" scoped>
 .date-control {
   text-align: center;
-}
-.date-button {
-  width: 300px;
-  margin: 0 10px;
+  display: flex;
+  flex-direction: row;
+  padding: 0 10px;
+  .date-button {
+    flex: 1;
+    margin: 0 10px;
+  }
 }
 </style>

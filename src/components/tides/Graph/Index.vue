@@ -38,8 +38,10 @@
         fill="green" />
 
       <rect
-        @mousemove.self="mouseMouse"
+        @mousemove.self="mouseMove"
         @mouseleave.self="mousePosition = null"
+        @touchstart.self="touchStart"
+        @touchmove.stop.self="mouseMove"
         width="100"
         height="100"
         fill="transparent" />
@@ -124,13 +126,25 @@ export default {
     handleResize (event) {
       this.svgDimensions = { w: this.$refs.svgGraph.clientWidth, h: this.$refs.svgGraph.clientHeight }
     },
-    mouseMouse (event) {
+    mouseMove (event) {
+      if (!event.touches && !event.layerX) return
+
+      let clientX = event.clientX
+      if (!clientX) {
+        clientX = event.touches[0].clientX
+      }
+
       let rect = event.target.getBoundingClientRect()
-      let xPos = event.clientX - rect.left
+      let xPos = clientX - rect.left
       this.mousePosition = xPos / rect.width * 100
     },
     convertedPoints (points) {
       return convertedValues(points, this.minX, this.maxX, this.minY, this.maxY)
+    },
+    touchStart (event) {
+      if (navigator.userAgent.match(/Android/i)) {
+        event.preventDefault()
+      }
     }
   },
   mounted () {

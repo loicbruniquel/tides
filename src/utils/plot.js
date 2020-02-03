@@ -114,6 +114,9 @@ export let yForX = function (points, targetX) {
   let afterIndex = points.findIndex(point => point.x > targetX)
   let after = points[afterIndex]
   let before = points[afterIndex - 1] || after
+  if (!before) {
+    return 0
+  }
   let ratioX = (targetX - before.x) / (after.x - before.x)
   return (before.y + (after.y - before.y) * ratioX)
 }

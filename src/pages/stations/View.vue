@@ -67,6 +67,7 @@ export default {
   margin-bottom: 20px;
   background-color: #efefef;
   padding: 20px 0;
+  overflow: hidden;
 }
 .loading-container {
   background-color: rgba(255, 255, 255, 0.7);
