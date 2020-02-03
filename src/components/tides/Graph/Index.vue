@@ -15,19 +15,21 @@
         height="0.2"
         fill="gray" />
 
-      <GraphPath :heightData="heightData" />
+      <GraphPath v-if="heightData" :heightData="heightData" />
 
-      <ellipse
-        v-for="point in extremeData"
-        :key="`${point.x}-${[point.y]}`"
-        :cx="point.x"
-        :cy="point.y"
-        :rx="dotRadius"
-        :ry="dotHeight"
-        stroke-width="0"
-        fill="blue" />
+      <g v-if="extremeData">
+        <ellipse
+          v-for="point in extremeData"
+          :key="`${point.x}-${[point.y]}`"
+          :cx="point.x"
+          :cy="point.y"
+          :rx="dotRadius"
+          :ry="dotHeight"
+          stroke-width="0"
+          fill="blue" />
+      </g>
 
-      <ellipse
+      <ellipse v-if="mousePosition && tides"
         :cx="mousePosition"
         :cy="mouseValue"
         :rx="dotRadius"
@@ -44,7 +46,10 @@
 
     </svg>
 
-    <GraphInfo class="info-badge" :dt="mouseDt" :height="mouseHeight" />
+    <GraphExtremes class="extremes-overlay" v-if="extremeData" :extremes="extremeData" />
+
+    <GraphInfo class="info-badge" v-if="tides && mousePosition" :dt="mouseDt" :height="mouseHeight" />
+
   </div>
 </template>
 
@@ -53,15 +58,17 @@ import { getAbsoluteValue, convertedValues, yForX } from 'src/utils/plot'
 
 import GraphPath from './Path'
 import GraphInfo from './Info'
+import GraphExtremes from './Extremes'
 
 export default {
   name: 'TideGraph',
   props: {
-    tides: { type: Object, required: true }
+    tides: { type: Object }
   },
   components: {
     GraphPath,
-    GraphInfo
+    GraphInfo,
+    GraphExtremes
   },
   data () {
     return {
@@ -71,13 +78,15 @@ export default {
   },
   computed: {
     heightData () {
+      if (!this.tides) return null
       return this.convertedPoints(this.tides.heights.map(height => {
         return { x: height.dt, y: height.height }
       }))
     },
     extremeData () {
+      if (!this.tides) return null
       return this.convertedPoints(this.tides.extremes.map(extreme => {
-        return { x: extreme.dt, y: extreme.height }
+        return { ...extreme, x: extreme.dt, y: extreme.height, type: extreme.type }
       }))
     },
     minX () {
@@ -93,7 +102,7 @@ export default {
       return this.tides.datums.find(datum => datum.name === 'LAT').height
     },
     dotRadius () {
-      return 100 / this.svgDimensions.w * 10
+      return 100 / this.svgDimensions.w * 5
     },
     dotHeight () {
       return this.dotRadius * this.svgAspectRatio
@@ -143,11 +152,21 @@ export default {
   position: relative;
   .info-badge {
     position: absolute;
-    top: 20px;
+    top: 0px;
     left: 20px;
   }
 }
 .graph {
   background-color: #efefef;
+}
+
+.extremes-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: transparent;
+  pointer-events:none;
 }
 </style>

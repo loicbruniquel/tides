@@ -86,6 +86,7 @@ export let getAbsoluteValue = function (percentValue, minValue, maxValue) {
 export let convertedValues = function (points, minX, maxX, minY, maxY) {
   return points.map(point => {
     return {
+      ...point,
       x: getPercentValue(point.x, minX, maxX),
       y: getPercentValue(point.y, minY, maxY)
     }

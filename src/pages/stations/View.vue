@@ -1,59 +1,51 @@
 <template>
   <q-page class="station" v-if="station">
-    <div class="loading-container" v-if="isLoading">
-      <q-spinner
-        color="primary"
-        size="3em"
-      />
-    </div>
-    <div v-else>
-      <TideGraph v-if="tidesData" :tides="tidesData" @mouseHeight="mouseHeightChanged" />
+    <div class="tides-wrapper">
+      <TideGraph :tides="tidesData" />
+
+      <div class="loading-container flex flex-center" v-if="isLoading">
+        <q-spinner
+          color="primary"
+          size="3em" />
+      </div>
     </div>
 
-    <q-btn :label="day" @click="showDatepicker = true" />
+    <DateControl v-model="date" />
 
-    <q-dialog v-model="showDatepicker">
-      <q-card>
-        <q-card-section>
-        <q-date v-model="day" />
-        </q-card-section>
-      </q-card>
-    </q-dialog>
   </q-page>
 </template>
 
 <script>
 import { stations as stationsApi, tides as tidesApi } from 'src/utils/api'
+import { date } from 'quasar'
 
 import TideGraph from 'components/tides/Graph/Index'
+import DateControl from 'components/DateControl'
 
 export default {
   name: 'StationView',
   components: {
-    TideGraph
+    TideGraph,
+    DateControl
   },
   data () {
     return {
       isLoading: true,
       station: null,
-      day: '2020/01/31',
-      tidesData: null,
-      showDatepicker: false
+      date: new Date(),
+      tidesData: null
     }
   },
   methods: {
     async refreshTidesData () {
       this.isLoading = true
-      let date = this.day.replace(/\//g, '-')
-      this.tidesData = await tidesApi.getData(this.$route.params.stationId, date)
+      let day = date.formatDate(this.date, 'YYYY-MM-DD')
+      this.tidesData = await tidesApi.getData(this.$route.params.stationId, day)
       this.isLoading = false
-    },
-    mouseHeightChanged (value) {
-      console.log(value)
     }
   },
   watch: {
-    day () {
+    date () {
       this.refreshTidesData()
     }
   },
@@ -69,5 +61,19 @@ export default {
 <style lang="scss" scoped>
 .station {
   padding: 0;
+}
+.tides-wrapper {
+  position: relative;
+  margin-bottom: 20px;
+  background-color: #efefef;
+  padding: 20px 0;
+}
+.loading-container {
+  background-color: rgba(255, 255, 255, 0.7);
+  position: absolute;
+  left: 0;
+  top: 0;
+  right:0;
+  bottom: 0;
 }
 </style>

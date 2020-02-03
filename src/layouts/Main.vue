@@ -40,7 +40,7 @@ export default {
 
 <style lang="scss" scoped>
 .main-container {
-  background-color: #efefef;
+  background-color: white;
 }
 
 .header {
