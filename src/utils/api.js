@@ -5,7 +5,7 @@ const STORAGE_KEY_TOKEN = 'api_token'
 
 const apiClient = axios.create({
   baseURL: 'http://localhost:1337',
-  timeout: 1000
+  timeout: 20000
 })
 
 let token = LocalStorage.getItem(STORAGE_KEY_TOKEN)

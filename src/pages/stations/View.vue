@@ -1,6 +1,24 @@
 <template>
   <q-page class="station" v-if="station">
-    <TideGraph v-if="tidesData" :tides="tidesData" @mouseHeight="mouseHeightChanged" />
+    <div class="loading-container" v-if="isLoading">
+      <q-spinner
+        color="primary"
+        size="3em"
+      />
+    </div>
+    <div v-else>
+      <TideGraph v-if="tidesData" :tides="tidesData" @mouseHeight="mouseHeightChanged" />
+    </div>
+
+    <q-btn :label="day" @click="showDatepicker = true" />
+
+    <q-dialog v-model="showDatepicker">
+      <q-card>
+        <q-card-section>
+        <q-date v-model="day" />
+        </q-card-section>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -16,17 +34,27 @@ export default {
   },
   data () {
     return {
+      isLoading: true,
       station: null,
-      day: '2020-01-31',
-      tidesData: null
+      day: '2020/01/31',
+      tidesData: null,
+      showDatepicker: false
     }
   },
   methods: {
     async refreshTidesData () {
-      this.tidesData = await tidesApi.getData(this.$route.params.stationId, this.day)
+      this.isLoading = true
+      let date = this.day.replace(/\//g, '-')
+      this.tidesData = await tidesApi.getData(this.$route.params.stationId, date)
+      this.isLoading = false
     },
     mouseHeightChanged (value) {
       console.log(value)
+    }
+  },
+  watch: {
+    day () {
+      this.refreshTidesData()
     }
   },
   async mounted () {
