@@ -15,25 +15,25 @@
         height="0.2"
         fill="gray" />
 
-      <GraphPath v-if="heightData" :heightData="heightData" />
+      <GraphPath
+        v-if="heightData"
+        :highColor="highColor"
+        :lowColor="lowColor"
+        :heightData="heightData" />
 
-      <g v-if="extremeData">
-        <ellipse
-          v-for="point in extremeData"
-          :key="`${point.x}-${[point.y]}`"
-          :cx="point.x"
-          :cy="point.y"
-          :rx="dotRadius"
-          :ry="dotHeight"
-          stroke-width="0"
-          fill="blue" />
-      </g>
+      <GraphExtremeDots
+        v-if="extremeData"
+        :extremes="extremeData"
+        :highColor="highColor"
+        :dotWidth="dotWith(5)"
+        :dotHeight="dotHeight(5)"
+        :lowColor="lowColor" />
 
       <ellipse v-if="mousePosition && tides"
         :cx="mousePosition"
         :cy="mouseValue"
-        :rx="dotRadius"
-        :ry="dotHeight"
+        :rx="dotWith(5)"
+        :ry="dotHeight(5)"
         stroke-width="0"
         fill="green" />
 
@@ -48,7 +48,12 @@
 
     </svg>
 
-    <GraphExtremes class="extremes-overlay" v-if="extremeData" :extremes="extremeData" />
+    <GraphPathExtremes
+      class="extremes-overlay"
+      v-if="extremeData"
+      :highColor="highColor"
+      :lowColor="lowColor"
+      :extremes="extremeData" />
 
     <GraphInfo class="info-badge" v-if="tides && mousePosition" :dt="mouseDt" :height="mouseHeight" />
 
@@ -60,17 +65,21 @@ import { getAbsoluteValue, convertedValues, yForX } from 'src/utils/plot'
 
 import GraphPath from './Path'
 import GraphInfo from './Info'
-import GraphExtremes from './Extremes'
+import GraphPathExtremes from './PathExtremes'
+import GraphExtremeDots from './ExtremeDots'
 
 export default {
   name: 'TideGraph',
   props: {
-    tides: { type: Object }
+    tides: { type: Object },
+    highColor: { type: String, default: '#0a5' },
+    lowColor: { type: String, default: '#05a' }
   },
   components: {
     GraphPath,
     GraphInfo,
-    GraphExtremes
+    GraphPathExtremes,
+    GraphExtremeDots
   },
   data () {
     return {
@@ -103,12 +112,6 @@ export default {
     maxY () {
       return this.tides.datums.find(datum => datum.name === 'LAT').height
     },
-    dotRadius () {
-      return 100 / this.svgDimensions.w * 5
-    },
-    dotHeight () {
-      return this.dotRadius * this.svgAspectRatio
-    },
     svgAspectRatio () {
       return this.svgDimensions.w / this.svgDimensions.h
     },
@@ -123,6 +126,12 @@ export default {
     }
   },
   methods: {
+    dotWith (radius) {
+      return 100 / this.svgDimensions.w * radius
+    },
+    dotHeight (radius) {
+      return this.dotWith(radius) * this.svgAspectRatio
+    },
     handleResize (event) {
       this.svgDimensions = { w: this.$refs.svgGraph.clientWidth, h: this.$refs.svgGraph.clientHeight }
     },

@@ -66,7 +66,7 @@ export default {
   position: relative;
   margin-bottom: 20px;
   background-color: #efefef;
-  padding: 20px 0;
+  padding: 30px 0;
   overflow: hidden;
 }
 .loading-container {
