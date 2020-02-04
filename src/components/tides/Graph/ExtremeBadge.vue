@@ -8,7 +8,7 @@
 import { date } from 'quasar'
 
 export default {
-  name: 'GraphExtreme',
+  name: 'GraphExtremeBadge',
   props: {
     extreme: { type: Object, required: true },
     highColor: { type: String, required: true },

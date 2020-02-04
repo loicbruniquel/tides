@@ -48,7 +48,7 @@
 
     </svg>
 
-    <GraphPathExtremes
+    <GraphPathBadges
       class="extremes-overlay"
       v-if="extremeData"
       :highColor="highColor"
@@ -65,7 +65,7 @@ import { getAbsoluteValue, convertedValues, yForX } from 'src/utils/plot'
 
 import GraphPath from './Path'
 import GraphInfo from './Info'
-import GraphPathExtremes from './PathExtremes'
+import GraphPathBadges from './PathBadges'
 import GraphExtremeDots from './ExtremeDots'
 
 export default {
@@ -78,7 +78,7 @@ export default {
   components: {
     GraphPath,
     GraphInfo,
-    GraphPathExtremes,
+    GraphPathBadges,
     GraphExtremeDots
   },
   data () {

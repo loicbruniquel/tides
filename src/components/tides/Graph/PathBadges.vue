@@ -1,6 +1,6 @@
 <template>
   <div class="extremes">
-    <Extreme
+    <ExtremeBadge
       v-for="extreme in extremes"
       :highColor="highColor"
       :lowColor="lowColor"
@@ -10,12 +10,12 @@
 </template>
 
 <script>
-import Extreme from './Extreme'
+import ExtremeBadge from './ExtremeBadge'
 
 export default {
-  name: 'GraphPathExtremes',
+  name: 'GraphPathBadges',
   components: {
-    Extreme
+    ExtremeBadge
   },
   props: {
     extremes: { type: Array, required: true },
