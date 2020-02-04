@@ -1,13 +1,17 @@
 <template>
   <div class="graph-container">
-
     <svg
       ref="svgGraph"
       height="100%"
       width="100%"
-      viewBox="0 0 100 100"
+      viewBox="0 -10 100 120"
       preserveAspectRatio="none"
       class="graph">
+
+      <GraphNight
+        v-if="sunsetPercent && sunrisePercent"
+        :sunset="sunsetPercent"
+        :sunrise="sunrisePercent" />
 
       <rect
         y="50"
@@ -32,10 +36,10 @@
       <ellipse v-if="mousePosition && tides"
         :cx="mousePosition"
         :cy="mouseValue"
-        :rx="dotWith(5)"
-        :ry="dotHeight(5)"
+        :rx="dotWith(8)"
+        :ry="dotHeight(8)"
         stroke-width="0"
-        fill="green" />
+        :fill="mouseColor" />
 
       <rect
         @mousemove.self="mouseMove"
@@ -55,31 +59,40 @@
       :lowColor="lowColor"
       :extremes="extremeData" />
 
-    <GraphInfo class="info-badge" v-if="tides && mousePosition" :dt="mouseDt" :height="mouseHeight" />
+    <GraphInfo
+      class="info-badge"
+      v-if="tides && mousePosition"
+      :dt="mouseDt"
+      :height="mouseHeight" />
 
   </div>
 </template>
 
 <script>
-import { getAbsoluteValue, convertedValues, yForX } from 'src/utils/plot'
+import { getAbsoluteValue, convertedValues, yForX, getPercentValue } from 'src/utils/plot'
+import { blendColor } from 'src/utils/color'
 
 import GraphPath from './Path'
 import GraphInfo from './Info'
 import GraphPathBadges from './PathBadges'
 import GraphExtremeDots from './ExtremeDots'
+import GraphNight from './Night'
 
 export default {
   name: 'TideGraph',
   props: {
     tides: { type: Object },
-    highColor: { type: String, default: '#0a5' },
-    lowColor: { type: String, default: '#05a' }
+    highColor: { type: String, default: '#00aa55' },
+    lowColor: { type: String, default: '#0055aa' },
+    sunrise: { type: Number },
+    sunset: { type: Number }
   },
   components: {
     GraphPath,
     GraphInfo,
     GraphPathBadges,
-    GraphExtremeDots
+    GraphExtremeDots,
+    GraphNight
   },
   data () {
     return {
@@ -113,7 +126,7 @@ export default {
       return this.tides.datums.find(datum => datum.name === 'LAT').height
     },
     svgAspectRatio () {
-      return this.svgDimensions.w / this.svgDimensions.h
+      return this.svgDimensions.w / this.svgDimensions.h * 1.2
     },
     mouseValue () {
       return yForX(this.heightData, this.mousePosition)
@@ -123,6 +136,31 @@ export default {
     },
     mouseDt () {
       return getAbsoluteValue(this.mousePosition, this.minX, this.maxX)
+    },
+    extremesYPercents () {
+      return this.extremeData.map(point => point.y)
+    },
+    minYPercent () {
+      return Math.min(...this.extremesYPercents)
+    },
+    maxYPercent () {
+      return Math.max(...this.extremesYPercents)
+    },
+    spanYPercent () {
+      return this.maxYPercent - this.minYPercent
+    },
+    mouseColor () {
+      let fromMin = (this.mouseValue - this.minYPercent)
+      let ratio = fromMin / this.spanYPercent
+      return blendColor(this.highColor, this.lowColor, ratio)
+    },
+    sunrisePercent () {
+      if (!this.tides) return null
+      return getPercentValue(this.sunrise, this.minX, this.maxX)
+    },
+    sunsetPercent () {
+      if (!this.tides) return null
+      return getPercentValue(this.sunset, this.minX, this.maxX)
     }
   },
   methods: {
@@ -185,10 +223,10 @@ export default {
 
 .extremes-overlay {
   position: absolute;
-  top: 0;
+  top: 8%;
   left: 0;
   right: 0;
-  bottom: 0;
+  bottom: 8%;
   background-color: transparent;
   pointer-events:none;
 }

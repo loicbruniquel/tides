@@ -24,7 +24,7 @@ export default {
         position: 'absolute',
         left: this.extreme.x + '%',
         top: this.extreme.y + '%',
-        transform: `translateX(-50%) translateY(${this.extreme.type === 'High' ? -125 : 25}%)`
+        transform: `translateX(-50%) translateY(${this.extreme.type === 'High' ? -120 : 20}%)`
       }
     },
     displayTime () {

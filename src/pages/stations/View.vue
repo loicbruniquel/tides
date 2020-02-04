@@ -1,7 +1,10 @@
 <template>
   <q-page class="station" v-if="station">
     <div class="tides-wrapper">
-      <TideGraph :tides="tidesData" />
+      <TideGraph
+        :sunrise="sunrise"
+        :sunset="sunset"
+        :tides="tidesData" />
 
       <div class="loading-container flex flex-center" v-if="isLoading">
         <q-spinner
@@ -18,6 +21,7 @@
 <script>
 import { stations as stationsApi, tides as tidesApi } from 'src/utils/api'
 import { date } from 'quasar'
+import suncalc from 'suncalc'
 
 import TideGraph from 'components/tides/Graph/Index'
 import DateControl from 'components/DateControl'
@@ -35,6 +39,32 @@ export default {
       date: new Date(),
       tidesData: null
     }
+  },
+  computed: {
+    middleOfDayDate () {
+      let start = date.startOfDate(this.date, 'day')
+      let middle = date.addToDate(start, { hours: 12 })
+      return middle
+    },
+    sunData () {
+      if (this.station) {
+        return suncalc.getTimes(this.middleOfDayDate, this.station.latitude, this.station.longitude)
+      }
+      return null
+    },
+    sunrise () {
+      if (this.sunData) {
+        return this.sunData.sunrise.getTime() / 1000
+      }
+      return null
+    },
+    sunset () {
+      if (this.sunData) {
+        return this.sunData.sunset.getTime() / 1000
+      }
+      return null
+    }
+
   },
   methods: {
     async refreshTidesData () {
@@ -66,7 +96,7 @@ export default {
   position: relative;
   margin-bottom: 20px;
   background-color: #efefef;
-  padding: 30px 0;
+  // padding: 30px 0;
   overflow: hidden;
 }
 .loading-container {
