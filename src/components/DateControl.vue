@@ -7,7 +7,7 @@
     <q-dialog v-model="showDatepicker">
       <q-card>
         <q-card-section>
-          <q-date v-model="datepickerDate" />
+          <q-date v-model="datepickerDate" today-btn />
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -61,11 +61,12 @@ export default {
 <style lang="scss" scoped>
 .date-control {
   text-align: center;
+  justify-content: center;
   display: flex;
   flex-direction: row;
   padding: 0 10px;
   .date-button {
-    flex: 1;
+    width: 300px;
     margin: 0 10px;
   }
 }

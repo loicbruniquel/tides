@@ -8,7 +8,7 @@
     </defs>
 
     <path
-    :d="svgPath(heightData)"
+      :d="svgPath(heightData)"
       fill="transparent"
       stroke="url(#gradient)"
       stroke-width="3"

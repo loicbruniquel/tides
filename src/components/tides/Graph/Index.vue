@@ -13,11 +13,7 @@
         :sunset="sunsetPercent"
         :sunrise="sunrisePercent" />
 
-      <rect
-        y="50"
-        width="100"
-        height="0.2"
-        fill="gray" />
+      <GraphSeparators />
 
       <GraphPath
         v-if="heightData"
@@ -77,6 +73,7 @@ import GraphInfo from './Info'
 import GraphPathBadges from './PathBadges'
 import GraphExtremeDots from './ExtremeDots'
 import GraphNight from './Night'
+import GraphSeparators from './Separators'
 
 export default {
   name: 'TideGraph',
@@ -92,7 +89,8 @@ export default {
     GraphInfo,
     GraphPathBadges,
     GraphExtremeDots,
-    GraphNight
+    GraphNight,
+    GraphSeparators
   },
   data () {
     return {

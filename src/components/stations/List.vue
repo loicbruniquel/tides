@@ -1,8 +1,8 @@
 <template>
-  <q-list bordered separator>
-    <q-item v-for="station in stations" :key="station.id" clickable v-ripple @click="open(station)">
+  <q-list bordered separator class="stations-list">
+    <q-item class="station-item" v-for="station in stations" :key="station.id" clickable v-ripple @click="open(station)">
       <q-item-section>
-        <q-item-label>{{station.name}}</q-item-label>
+        <q-item-label class="station-name">{{station.name}}</q-item-label>
         <q-item-label caption>{{station.latitude}}, {{station.longitude}}</q-item-label>
       </q-item-section>
       <q-item-section top side>
@@ -38,6 +38,20 @@ export default {
 }
 </script>
 
-<style>
-
+<style lang="scss" scoped>
+.stations-list {
+  max-width: 890px;
+  margin: 0 auto;
+  background-color: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.15);
+  .station-item {
+    padding: 16px;
+    .station-name {
+      font-weight: bold;
+      font-size: 1.4em;
+    }
+  }
+}
 </style>

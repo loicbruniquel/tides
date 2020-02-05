@@ -2,7 +2,7 @@
   <q-layout class="main-container lHh Lpr lFf">
     <q-page-container>
 
-      <header class="header flex items-center q-pa-md">
+      <header class="header flex items-center">
         <q-btn outline round color="primary" icon="home" to="/" />
         <h2 class="page-title">{{$store.state.pageTitle}}</h2>
         <MiniUser />
@@ -40,11 +40,11 @@ export default {
 
 <style lang="scss" scoped>
 .main-container {
-  background-color: white;
+  background-color: #eee;
 }
 
 .header {
-  background-color: white;
+  padding: 10px 20px;
   h2 {
     margin: 0;
     flex: 1;

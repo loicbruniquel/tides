@@ -1,20 +1,21 @@
 <template>
   <q-page class="station" v-if="station">
-    <div class="tides-wrapper">
-      <TideGraph
-        :sunrise="sunrise"
-        :sunset="sunset"
-        :tides="tidesData" />
+    <div class="station-wrapper">
+      <div class="graph-wrapper">
+        <TideGraph
+          :sunrise="sunrise"
+          :sunset="sunset"
+          :tides="tidesData" />
 
-      <div class="loading-container flex flex-center" v-if="isLoading">
-        <q-spinner
-          color="primary"
-          size="3em" />
+        <div class="loading-container flex flex-center" v-if="isLoading">
+          <q-spinner
+            color="primary"
+            size="3em" />
+        </div>
       </div>
+
+      <DateControl class="date-control" v-model="date" />
     </div>
-
-    <DateControl v-model="date" />
-
   </q-page>
 </template>
 
@@ -91,13 +92,21 @@ export default {
 <style lang="scss" scoped>
 .station {
   padding: 0;
+  min-height: auto !important;
 }
-.tides-wrapper {
+.station-wrapper {
+  max-width: 900px;
+  margin: 0 auto;
+}
+.graph-wrapper {
   position: relative;
   margin-bottom: 20px;
   background-color: #efefef;
-  // padding: 30px 0;
   overflow: hidden;
+  border-radius: 26px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+  max-width: 890px;
+  margin: 0 auto;
 }
 .loading-container {
   background-color: rgba(255, 255, 255, 0.7);
@@ -106,5 +115,8 @@ export default {
   top: 0;
   right:0;
   bottom: 0;
+}
+.date-control {
+  margin-top: 20px;
 }
 </style>
