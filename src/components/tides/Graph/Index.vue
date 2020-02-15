@@ -15,6 +15,11 @@
 
       <GraphSeparators />
 
+      <NowMarker
+        v-if="minX && maxX"
+        :dayStart="minX"
+        :dayEnd="maxX" />
+
       <GraphPath
         v-if="heightData"
         :highColor="highColor"
@@ -74,6 +79,7 @@ import GraphPathBadges from './PathBadges'
 import GraphExtremeDots from './ExtremeDots'
 import GraphNight from './Night'
 import GraphSeparators from './Separators'
+import NowMarker from './NowMarker'
 
 export default {
   name: 'TideGraph',
@@ -90,7 +96,8 @@ export default {
     GraphPathBadges,
     GraphExtremeDots,
     GraphNight,
-    GraphSeparators
+    GraphSeparators,
+    NowMarker
   },
   data () {
     return {
@@ -112,15 +119,19 @@ export default {
       }))
     },
     minX () {
+      if (!this.tides) return null
       return this.tides.heights[0].dt
     },
     maxX () {
+      if (!this.tides) return null
       return this.tides.heights[this.tides.heights.length - 1].dt
     },
     minY () {
+      if (!this.tides) return null
       return this.tides.datums.find(datum => datum.name === 'HAT').height
     },
     maxY () {
+      if (!this.tides) return null
       return this.tides.datums.find(datum => datum.name === 'LAT').height
     },
     svgAspectRatio () {
@@ -211,7 +222,7 @@ export default {
   position: relative;
   .info-badge {
     position: absolute;
-    top: 0px;
+    top: 20px;
     left: 20px;
   }
 }
