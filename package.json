@@ -12,18 +12,18 @@
     "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {
-    "@quasar/extras": "^1.5.1",
+    "@quasar/extras": "^1.8.2",
     "axios": "^0.18.1",
-    "mapbox-gl": "^1.7.0",
-    "quasar": "^1.9.2",
+    "mapbox-gl": "^1.11.0",
+    "quasar": "^1.12.4",
     "suncalc": "^1.8.0",
-    "vue-i18n": "^8.0.0",
+    "vue-i18n": "^8.18.2",
     "vue-mapbox": "^0.4.1"
   },
   "devDependencies": {
-    "@quasar/app": "^1.5.6",
+    "@quasar/app": "^1.9.6",
     "@vue/eslint-config-standard": "^4.0.0",
-    "babel-eslint": "^10.0.1",
+    "babel-eslint": "^10.1.0",
     "eslint": "^5.10.0",
     "eslint-loader": "^2.1.1",
     "eslint-plugin-vue": "^5.0.0"

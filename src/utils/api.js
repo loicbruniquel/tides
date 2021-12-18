@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { LocalStorage } from 'quasar'
+import localStations from './local'
 
 const STORAGE_KEY_TOKEN = 'api_token'
 
@@ -49,7 +50,7 @@ export let user = {
   }
 }
 
-export let stations = {
+let apiStations = {
   async get (stationId) {
     return (await apiClient.get(`stations/${stationId}`)).data
   },
@@ -66,6 +67,8 @@ export let stations = {
     return (await apiClient.put(`stations/${stationId}`, data)).data
   }
 }
+
+export let stations = user.getToken() ? apiStations : localStations
 
 export let tides = {
   async getData (stationId, day) {
