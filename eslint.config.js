@@ -4,24 +4,7 @@ import tseslint from 'typescript-eslint'
 
 export default tseslint.config(
   {
-    ignores: [
-      'dist/**',
-      'dev-dist/**',
-      'node_modules/**',
-      'src/**/*.js',
-      'public/**',
-
-      // TEMPORARY: legacy Quasar/Vue 2 components still on disk. Remove these once
-      // the legacy tree is deleted — see docs/MIGRATION_PLAN.md.
-      'src/pages/**',
-      'src/layouts/**',
-      'src/components/DateControl.vue',
-      'src/components/user/**',
-      'src/components/tides/Graph/**',
-      'src/components/stations/Form.vue',
-      'src/components/stations/List.vue',
-      'src/components/stations/map/**',
-    ],
+    ignores: ['dist/**', 'dev-dist/**', 'node_modules/**', 'public/**'],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,
@@ -38,6 +21,17 @@ export default tseslint.config(
     rules: {
       // Single-word component filenames are fine for views and graph layers.
       'vue/multi-word-component-names': 'off',
+
+      // Pure whitespace opinions inherited from vue/recommended. Satisfying them
+      // means one attribute per line, which makes the templates several times
+      // taller without making them clearer. Left to the editor.
+      'vue/max-attributes-per-line': 'off',
+      'vue/singleline-html-element-content-newline': 'off',
+      'vue/html-self-closing': 'off',
+
+      // Optional props are typed `foo?: T` and read as `undefined`, which is a
+      // meaningful value here (e.g. an absent `class`). A default would not help.
+      'vue/require-default-prop': 'off',
       '@typescript-eslint/no-unused-vars': [
         'error',
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },

@@ -6,10 +6,14 @@
     <meta name="description" content="Tide graphs and times for any coastal location" />
 
     <!-- `viewport-fit=cover` + the safe-area padding in main.css keeps the layout clear
-         of the iOS notch and home indicator when installed to the home screen. -->
+         of the iOS notch and home indicator when installed to the home screen.
+
+         Zoom is disabled so pinching the tide graph scrubs it instead of magnifying the
+         page. This meta is enough on Android and in an iOS standalone install; iOS
+         Safari ignores it, and is handled in src/lib/viewport.ts. -->
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1, viewport-fit=cover"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
     />
     <meta name="format-detection" content="telephone=no" />
 

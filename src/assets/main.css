@@ -118,6 +118,10 @@
       Arial, sans-serif;
     /* Stops the whole page rubber-banding when a drag on the graph is not consumed. */
     overscroll-behavior-y: none;
+    /* `manipulation` is "auto minus double-tap zoom": scrolling still works, but a
+       double tap on the graph no longer magnifies the page. Pinch is blocked by the
+       viewport meta and src/lib/viewport.ts. */
+    touch-action: manipulation;
   }
 
   /* Keep content clear of the notch / home indicator in standalone mode. */
