@@ -4,6 +4,8 @@ node_modules
 
 # Build output
 /dist
+# intermediate SVG masters from scripts/make-icons.py
+/scripts/.icon-build
 # vite-plugin-pwa's dev-mode service worker
 /dev-dist
 *.local

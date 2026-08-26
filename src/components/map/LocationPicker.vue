@@ -5,7 +5,6 @@ import { onMounted, onScopeDispose, ref, watch } from 'vue'
 
 import Button from '@/components/ui/Button.vue'
 import Input from '@/components/ui/Input.vue'
-import { useIsDark } from '@/composables/useIsDark'
 
 import 'leaflet/dist/leaflet.css'
 
@@ -16,18 +15,22 @@ const props = defineProps<{
 
 const emit = defineEmits<{ move: [latitude: number, longitude: number] }>()
 
-const TILES = {
-  light: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
-  dark: 'https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png',
-}
+/**
+ * Esri World Imagery — no API key, usable to zoom 19, and satellite is the right
+ * basemap for this app: you can see where the sand actually ends.
+ *
+ * Note the `{z}/{y}/{x}` order. Esri's ArcGIS REST tiles put row before column, unlike
+ * the `{z}/{x}/{y}` every other provider uses; swapping them silently returns tiles
+ * from the wrong place.
+ */
+const TILE_URL =
+  'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
 const ATTRIBUTION =
-  '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+  'Tiles &copy; <a href="https://www.esri.com">Esri</a> — Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community'
 
 const container = ref<HTMLDivElement | null>(null)
-const isDark = useIsDark()
 
 let map: L.Map | null = null
-let tileLayer: L.TileLayer | null = null
 
 /** Set while the map is being recentred from props, so we don't echo the move back. */
 let syncing = false
@@ -47,11 +50,7 @@ onMounted(() => {
     attributionControl: true,
   })
 
-  tileLayer = L.tileLayer(isDark.value ? TILES.dark : TILES.light, {
-    attribution: ATTRIBUTION,
-    subdomains: 'abcd',
-    maxZoom: 19,
-  }).addTo(map)
+  L.tileLayer(TILE_URL, { attribution: ATTRIBUTION, maxZoom: 19 }).addTo(map)
 
   L.control.zoom({ position: 'bottomright' }).addTo(map)
 
@@ -65,11 +64,6 @@ onMounted(() => {
 onScopeDispose(() => {
   map?.remove()
   map = null
-})
-
-watch(isDark, (dark) => {
-  if (!map || !tileLayer) return
-  tileLayer.setUrl(dark ? TILES.dark : TILES.light)
 })
 
 // Recentre when the coordinates are edited in the form rather than on the map.

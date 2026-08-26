@@ -10,7 +10,7 @@ existing look-and-feel (modernised), with real offline support.
 | Framework | **Vue 3 + Vite, SPA, TypeScript** | No SEO/SSR need, so Nuxt's Nitro layer and build weight buy nothing. The SVG graph is already Vue and is the bulk of the real logic — React would mean rewriting it for no gain. |
 | UI kit | **shadcn-vue + Tailwind v4** (Reka UI primitives) | Components are vendored into the repo as source, so we own the styling. Ships the calendar/dialog/toast/popover primitives this app needs, with no runtime theme layer. |
 | Icons | **Phosphor** — [`@phosphor-icons/vue`](https://github.com/phosphor-icons/vue) | Consistent, friendly family with six weights, tree-shakeable named imports. Replaces the Lucide icons shadcn-vue vendors by default. MIT. |
-| Map | **Leaflet** (`leaflet` + thin Vue wrapper) | Replaces `mapbox-gl` + `vue-mapbox`; no access token, much smaller. |
+| Map | **Leaflet** + **Esri World Imagery** tiles | Replaces `mapbox-gl` + `vue-mapbox`; no access token, much smaller. Satellite because you are picking a point on a beach. CARTO was the first choice but now watermarks keyless tiles "API KEY REQUIRED". |
 | Tide cache | **IndexedDB** | localStorage is synchronous (jank on mobile), string-only, ~5 MB cap. IDB is async and structured. |
 | Station list | **localStorage** | Tiny, and a synchronous read at boot avoids an empty-list flash. Deliberate split from the tide cache. |
 | Data fetching | **TanStack Query (vue-query)** persisted to IDB | Gives stale-while-revalidate, offline reads, prefetch and dedup in one mechanism instead of a hand-rolled cache. |
@@ -144,9 +144,10 @@ exactly as documented in CLAUDE.md — including the intentional HAT/LAT y inver
 - **Station view** (`/stations/:id`) — graph + date control. Non-blocking loading: cached
   data renders immediately, a slim progress bar shows a background revalidation, and a
   "cached, last updated …" note appears when offline.
-- **Map picker** (`/stations/new`, `/stations/:id/edit`) — Leaflet, CARTO Voyager tiles
-  (no token), centre-crosshair pick as today, plus **Nominatim place search** and a
-  **geolocate** button.
+- **Map picker** (`/stations/new`, `/stations/:id/edit`) — Leaflet, Esri World Imagery
+  tiles (no key, zoom 19), centre-crosshair pick as today, plus **Nominatim place search**
+  and a **geolocate** button. Esri serves tiles as `{z}/{y}/{x}`, row before column,
+  unlike every other provider.
 - **Settings** — prefetch window (days), theme, clear cache.
 - **404**.
 
@@ -168,8 +169,15 @@ a real iPhone and an Android device.
 
 - `netlify.toml` (build `npm run build`, publish `dist`) and `public/_redirects`
   with `/* /index.html 200`.
-- Deploy to a Netlify preview first and confirm the localStorage migration against a real
-  browser profile that has existing stations, before pointing the production domain at it.
+- Deploying to a **fresh Netlify site**, not over the existing one. Nothing therefore has
+  to interoperate with the deployed Quasar build: no service-worker handover, and the
+  `serialized_stations` migration in the stations store never fires on a new origin.
+  It is kept anyway, inert and cheap, because it becomes load-bearing the moment
+  `tides.mauvaisgout.net` is repointed at this site.
+- **If that domain is ever moved across**, the old Workbox service worker at
+  `/service-worker.js` is still registered on returning devices and will keep serving the
+  old precached shell indefinitely. Killing it needs a self-destroying worker published at
+  that exact path, excluded from the new precache manifest.
 - Update CLAUDE.md to describe the new stack and delete the "pre-migration" section.
 
 ## Risks and open items
@@ -181,5 +189,9 @@ a real iPhone and an Android device.
   fine at this volume, but it must not be called on every keystroke — debounce ~500 ms.
 - **iOS PWA storage eviction**: Safari can clear IDB for sites unused for ~7 days unless the
   app is installed to the home screen. Installing avoids it; worth a note in the UI.
+- **Keyless tile providers keep closing.** CARTO now watermarks unauthenticated tiles,
+  which is why the basemap is Esri. Esri's own ocean layer (`World_Ocean_Base`) has the
+  nicest bathymetry but stops at zoom 10 over Morocco — too coarse to place a pin, so it
+  is not used. OpenStreetMap's standard tiles are the fallback if Esri ever follows CARTO.
 - **No test suite exists today**, so the port has no regression net beyond the graph unit
   tests added in Phase 2. Visual comparison against production is the practical check.

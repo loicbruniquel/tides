@@ -23,9 +23,16 @@ export default defineConfig({
         background_color: '#0b1220',
         theme_color: '#0b1220',
         icons: [
-          { src: 'icons/icon-192x192.png', sizes: '192x192', type: 'image/png' },
-          { src: 'icons/icon-512x512.png', sizes: '512x512', type: 'image/png' },
-          { src: 'icons/icon-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+          { src: 'icons/icon-192x192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
+          { src: 'icons/icon-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
+          // Separate artwork, not the same file re-declared: a maskable icon needs its
+          // content inside the middle 80% or Android crops into it.
+          {
+            src: 'icons/icon-512x512-maskable.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'maskable',
+          },
         ],
       },
       workbox: {
@@ -35,11 +42,12 @@ export default defineConfig({
           {
             // Map tiles only. Tide payloads are deliberately NOT cached here —
             // IndexedDB is their single source of truth (see docs/MIGRATION_PLAN.md).
-            urlPattern: /^https:\/\/[a-d]\.basemaps\.cartocdn\.com\/.*/i,
+            urlPattern: /^https:\/\/server\.arcgisonline\.com\/ArcGIS\/rest\/services\/.*/i,
             handler: 'CacheFirst',
             options: {
+              // Satellite imagery tiles are large, so the cap is on the low side.
               cacheName: 'map-tiles',
-              expiration: { maxEntries: 300, maxAgeSeconds: 60 * 60 * 24 * 30 },
+              expiration: { maxEntries: 250, maxAgeSeconds: 60 * 60 * 24 * 30 },
               cacheableResponse: { statuses: [0, 200] },
             },
           },

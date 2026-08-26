@@ -12,8 +12,8 @@
   to = "/index.html"
   status = 200
 
-# The service worker must never be served stale, or clients pin themselves to an
-# old precache manifest and stop receiving updates.
+# The service worker must never be served stale, or clients pin themselves to an old
+# precache manifest and stop receiving updates.
 [[headers]]
   for = "/sw.js"
   [headers.values]
