@@ -38,7 +38,7 @@ watch(
   { immediate: true },
 )
 
-const { data, isFetching, isError, dataUpdatedAt } = useTideDay(
+const { data, isFetching, isError, isPaused, dataUpdatedAt } = useTideDay(
   () => station.value,
   () => day.value,
 )
@@ -87,7 +87,7 @@ const staleNotice = computed(() => {
         </p>
       </div>
       <Button
-        variant="ghost"
+        variant="outline"
         size="icon"
         aria-label="Edit station"
         :as="RouterLink"
@@ -121,7 +121,10 @@ const staleNotice = computed(() => {
         v-else
         class="flex h-[clamp(260px,45vh,420px)] flex-col items-center justify-center gap-2 bg-card text-center"
       >
-        <template v-if="isError">
+        <!-- `isPaused` matters as much as `isError`: with `networkMode: 'offlineFirst'`
+             an offline fetch fails once and then *waits* for a connection rather than
+             erroring, so without this the view sat on "Loading tides…" forever. -->
+        <template v-if="isError || isPaused">
           <PhCloudSlash class="text-3xl text-muted-foreground" />
           <p class="text-sm text-muted-foreground">
             {{ online ? 'Could not load this day.' : 'Not cached, and you are offline.' }}

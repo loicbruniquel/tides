@@ -32,7 +32,7 @@ npm run build      # vue-tsc --noEmit && vite build → dist/
 npm run preview    # serve the built app; needed to exercise the service worker
 npm run check      # vue-tsc + eslint, must be clean
 npm run lint       # eslint --fix
-npm run test       # vitest (34 tests)
+npm run test       # vitest (37 tests)
 ```
 
 The service worker is inactive under `dev`. Use `build` + `preview` to test install and
@@ -54,11 +54,12 @@ src/
     plot.ts        graph geometry, ported from the Quasar app  (+ .spec)
     tides.ts       nextExtreme / heightAt / isRising           (+ .spec)
     time.ts        station-timezone formatting and day maths   (+ .spec)
+    timers.ts      clampTimeout — the 32-bit setTimeout ceiling  (+ .spec)
     query.ts       QueryClient, IndexedDB persistence, eviction
     storage.ts     total wrappers over localStorage
     utils.ts       cn()
   stores/          stations (localStorage), settings (theme, prefetch window)
-  composables/     useTides (query + prefetch), useOnline
+  composables/     useTides (query + prefetch), useOnline, useNow (shared clock)
   components/
     tides/         TideGraph.vue, DateControl.vue, CalendarGrid.vue, graph/*
     stations/      StationCard.vue
@@ -122,7 +123,15 @@ UTC arithmetic and is therefore DST-proof.
 ## Data and offline
 
 - **Tide payloads → IndexedDB**, as a persisted TanStack Query cache (`lib/query.ts`).
-  `staleTime` 6h, `gcTime` 30 days, `networkMode: 'offlineFirst'`.
+  `staleTime` 6h, `networkMode: 'offlineFirst'`, and a `gcTime` of 30 days **clamped
+  through `lib/timers.ts`**. That clamp is load-bearing: TanStack Query schedules garbage
+  collection with a plain `setTimeout(…, gcTime)`, and any delay over 2^31−1 ms (~24.8
+  days) wraps negative and fires immediately, so an unclamped 30 days evicted every
+  query a tick after its component unmounted and persisted an empty cache. Never hand a
+  multi-week duration to a timer.
+- Writes to IndexedDB are debounced 1s and flushed on `pagehide` / `visibilitychange`,
+  because the library saves the whole dehydrated client on *every* cache event and a
+  five-day prefetch fires a dozen of them.
 - `main.ts` **awaits rehydration before mounting**. Mounting first renders an empty cache
   for a frame and shows nothing at all on an offline launch.
 - Opening a station prefetches N days ahead (5 by default, set in Settings). Opening the

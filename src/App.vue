@@ -13,8 +13,16 @@ const showChrome = computed(() => route.meta.chrome !== false)
 </script>
 
 <template>
-  <OfflineBanner v-if="showChrome" />
-  <AppHeader v-if="showChrome" />
+  <!-- Banner and header share one sticky, safe-area-padded shell. The inset has to
+       live on the outermost element: put it on the header alone and the offline banner
+       renders above it, underneath the iOS status bar. -->
+  <div
+    v-if="showChrome"
+    class="safe-top sticky top-0 z-30 bg-background/85 backdrop-blur-md"
+  >
+    <OfflineBanner />
+    <AppHeader />
+  </div>
 
   <main>
     <RouterView v-slot="{ Component }">

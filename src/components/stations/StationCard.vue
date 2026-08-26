@@ -10,9 +10,10 @@ import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
 
 import Button from '@/components/ui/Button.vue'
+import { useNow } from '@/composables/useNow'
 import { useTideDay } from '@/composables/useTides'
-import { heightAt, isRising, nextExtreme } from '@/lib/tides'
-import { formatTime, timeZoneFor, todayInZone } from '@/lib/time'
+import { heightAt, nextExtreme } from '@/lib/tides'
+import { addDays, formatTime, timeZoneFor, todayInZone } from '@/lib/time'
 import type { Station } from '@/types'
 
 const props = defineProps<{ station: Station }>()
@@ -21,18 +22,38 @@ const emit = defineEmits<{ move: [delta: number] }>()
 
 const timeZone = computed(() => timeZoneFor(props.station.latitude, props.station.longitude))
 const today = computed(() => todayInZone(timeZone.value))
+const tomorrow = computed(() => addDays(today.value, 1))
+
+const now = useNow()
 
 // Cached-first: with data in IndexedDB this renders instantly and offline.
-const { data } = useTideDay(
+const { data, isPaused } = useTideDay(
   () => props.station,
   () => today.value,
 )
 
-const nowSeconds = Date.now() / 1000
+const todayNext = computed(() => nextExtreme(data.value, now.value))
 
-const next = computed(() => nextExtreme(data.value, nowSeconds))
-const level = computed(() => heightAt(data.value, nowSeconds))
-const rising = computed(() => isRising(data.value, nowSeconds))
+// After the day's last high or low — often several hours before midnight — today's
+// payload holds no answer to "what's next", and the card used to fall through to
+// "No data yet" despite having the whole curve. Only then is tomorrow worth fetching.
+const needsTomorrow = computed(() => data.value !== undefined && todayNext.value === undefined)
+
+const { data: tomorrowData } = useTideDay(
+  () => (needsTomorrow.value ? props.station : undefined),
+  () => tomorrow.value,
+)
+
+const next = computed(() => todayNext.value ?? nextExtreme(tomorrowData.value, now.value))
+const level = computed(
+  () => heightAt(data.value, now.value) ?? heightAt(tomorrowData.value, now.value),
+)
+const rising = computed(() => (next.value ? next.value.type === 'High' : undefined))
+
+/** Nothing to show, and nothing on the way: say so rather than implying it is loading. */
+const emptyLabel = computed(() =>
+  isPaused.value && !data.value ? 'Offline — not cached' : 'No data yet',
+)
 </script>
 
 <template>
@@ -61,7 +82,7 @@ const rising = computed(() => isRising(data.value, nowSeconds))
           now {{ level.toFixed(1) }} m
         </p>
       </div>
-      <p v-else class="text-xs text-muted-foreground">No data yet</p>
+      <p v-else class="text-xs text-muted-foreground">{{ emptyLabel }}</p>
     </RouterLink>
 
     <!-- Revealed on hover on a pointer device; always present for touch and keyboard,

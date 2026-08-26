@@ -23,7 +23,7 @@ async function clearCache() {
 </script>
 
 <template>
-  <div class="mx-auto flex w-full max-w-2xl flex-col gap-6 px-4 pb-16">
+  <div class="mx-auto flex w-full max-w-3xl flex-col gap-6 px-4 pb-16">
     <section class="rounded-2xl border border-border bg-card p-4">
       <h2 class="font-semibold">Theme</h2>
       <div class="mt-3 flex gap-2">

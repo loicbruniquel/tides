@@ -12,11 +12,13 @@ const title = computed(() => (isHome.value ? 'Tides' : (route.meta.title as stri
 </script>
 
 <template>
-  <header class="safe-top sticky top-0 z-30 bg-background/85 backdrop-blur-md">
+  <!-- Stickiness, backdrop and the safe-area inset belong to the chrome wrapper in
+       App.vue, which also holds the offline banner. -->
+  <header>
     <div class="mx-auto flex h-14 w-full max-w-3xl items-center gap-2 px-4">
       <Button
         v-if="!isHome"
-        variant="ghost"
+        variant="outline"
         size="icon"
         aria-label="Back to stations"
         :as="RouterLink"
@@ -29,7 +31,7 @@ const title = computed(() => (isHome.value ? 'Tides' : (route.meta.title as stri
 
       <Button
         v-if="route.name !== 'settings'"
-        variant="ghost"
+        variant="outline"
         size="icon"
         aria-label="Settings"
         :as="RouterLink"

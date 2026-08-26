@@ -23,7 +23,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="mx-auto w-full max-w-2xl px-4 pb-24">
+  <div class="mx-auto w-full max-w-3xl px-4 pb-24">
     <ul v-if="stations.stations.length" class="flex flex-col gap-3">
       <StationCard
         v-for="station in stations.stations"

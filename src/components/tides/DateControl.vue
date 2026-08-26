@@ -44,14 +44,14 @@ function select(day: IsoDay) {
 </script>
 
 <template>
-  <div class="flex items-center justify-center gap-2">
-    <Button variant="outline" size="icon" aria-label="Previous day" @click="shift(-1)">
+  <div class="flex items-center justify-between gap-2">
+    <Button variant="outline" size="icon" class="size-12 shrink-0" aria-label="Previous day" @click="shift(-1)">
       <PhArrowLeft />
     </Button>
 
     <PopoverRoot v-model:open="open">
       <PopoverTrigger as-child>
-        <Button variant="ghost" class="h-12 min-w-[13rem] flex-col gap-0 px-4">
+        <Button variant="outline" class="h-12 min-w-0 flex-1 flex-col gap-0 px-4">
           <span class="flex items-center gap-2 text-sm font-semibold">
             <PhCalendarBlank class="text-muted-foreground" />
             {{ label }}
@@ -81,7 +81,7 @@ function select(day: IsoDay) {
       </PopoverPortal>
     </PopoverRoot>
 
-    <Button variant="outline" size="icon" aria-label="Next day" @click="shift(1)">
+    <Button variant="outline" size="icon" class="size-12 shrink-0" aria-label="Next day" @click="shift(1)">
       <PhArrowRight />
     </Button>
   </div>
