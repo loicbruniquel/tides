@@ -1,39 +1,57 @@
 {
-  "name": "tides-quasar",
-  "version": "0.0.1",
-  "description": "Tides predictions",
-  "productName": "Tides",
-  "cordovaId": "org.cordova.quasar.app",
-  "capacitorId": "",
-  "author": "Loïc Bruniquel <loicbr@gmail.com>",
+  "name": "tides",
+  "version": "2.0.0",
+  "description": "Tide graphs and times for any coastal location, offline-first",
   "private": true,
+  "type": "module",
+  "author": "Loïc Bruniquel <loicbr@gmail.com>",
   "scripts": {
-    "lint": "eslint --ext .js,.vue src",
-    "test": "echo \"No test specified\" && exit 0"
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "check": "vue-tsc --noEmit && eslint .",
+    "lint": "eslint . --fix",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
-    "@quasar/extras": "^1.8.2",
-    "axios": "^0.18.1",
-    "mapbox-gl": "^1.11.0",
-    "quasar": "^1.12.4",
-    "suncalc": "^1.8.0",
-    "vue-i18n": "^8.18.2",
-    "vue-mapbox": "^0.4.1"
+    "@phosphor-icons/vue": "^2.2.1",
+    "@tanstack/query-persist-client-core": "^5.62.0",
+    "@tanstack/vue-query": "^5.62.0",
+    "date-fns": "^4.1.0",
+    "idb-keyval": "^6.2.1",
+    "leaflet": "^1.9.4",
+    "pinia": "^3.0.0",
+    "reka-ui": "^2.0.0",
+    "suncalc": "^1.9.0",
+    "tz-lookup": "^6.1.25",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0"
   },
   "devDependencies": {
-    "@quasar/app": "^1.9.6",
-    "@vue/eslint-config-standard": "^4.0.0",
-    "babel-eslint": "^10.1.0",
-    "eslint": "^5.10.0",
-    "eslint-loader": "^2.1.1",
-    "eslint-plugin-vue": "^5.0.0"
+    "@eslint/js": "^9.17.0",
+    "@tailwindcss/vite": "^4.0.0",
+    "@types/leaflet": "^1.9.15",
+    "@types/node": "^26.3.0",
+    "@types/suncalc": "^1.9.2",
+    "@vitejs/plugin-vue": "^6.0.0",
+    "@vue/test-utils": "^2.4.6",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "eslint": "^9.17.0",
+    "eslint-plugin-vue": "^9.32.0",
+    "jsdom": "^25.0.1",
+    "tailwind-merge": "^2.6.0",
+    "tailwindcss": "^4.0.0",
+    "typescript": "^5.7.0",
+    "typescript-eslint": "^8.19.0",
+    "vite": "^7.0.0",
+    "vite-plugin-pwa": "^1.0.0",
+    "vitest": "^3.0.0",
+    "vue-tsc": "^2.2.0",
+    "workbox-window": "^7.3.0"
   },
   "engines": {
-    "node": ">= 10.18.1",
-    "npm": ">= 6.13.4",
-    "yarn": ">= 1.21.1"
-  },
-  "browserslist": [
-    "last 1 version, not dead, ie >= 11"
-  ]
+    "node": ">=20.19"
+  }
 }
