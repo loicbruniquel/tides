@@ -24,3 +24,6 @@ pnpm-debug.log*
 *.ntvs*
 *.njsproj
 *.sln
+
+# Claude Code worktrees — never commit these (a stray gitlink breaks the Netlify build)
+/.claude/worktrees
