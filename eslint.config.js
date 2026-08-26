@@ -18,6 +18,14 @@ export default tseslint.config(
     },
   },
   {
+    // `__APP_VERSION__` is substituted by the `define` in vite.config.ts, so it is
+    // never declared in source. TypeScript knows it from src/env.d.ts; eslint needs
+    // telling separately or no-undef flags it.
+    languageOptions: {
+      globals: {
+        __APP_VERSION__: 'readonly',
+      },
+    },
     rules: {
       // Single-word component filenames are fine for views and graph layers.
       'vue/multi-word-component-names': 'off',

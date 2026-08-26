@@ -15,6 +15,9 @@ declare module 'tz-lookup' {
   export default function tzlookup(latitude: number, longitude: number): string
 }
 
+/** Injected by the `define` in vite.config.ts, straight from package.json. */
+declare const __APP_VERSION__: string
+
 interface ImportMetaEnv {
   readonly VITE_TIDES_API?: string
 }

@@ -215,6 +215,11 @@ fallback, and `must-revalidate` on `/sw.js`.
 ## Conventions
 
 - `@/` aliases `src/`.
+- The version shown beside "Tides" in the header comes from `package.json`, inlined by a
+  `define` in `vite.config.ts` as `__APP_VERSION__` (declared in `src/env.d.ts` for
+  `vue-tsc` and in `eslint.config.js` for `no-undef`). Bump it with
+  `npm version <x.y.z> --no-git-tag-version` so the lockfile stays in sync; never
+  hardcode a version string in a component.
 - `npm run check` must pass — it is `vue-tsc --noEmit` plus eslint, and it gates the build.
 - Purely cosmetic `vue/*` formatting rules are disabled in `eslint.config.js`; don't
   reflow templates to satisfy rules that aren't on.

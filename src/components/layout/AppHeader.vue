@@ -9,6 +9,12 @@ const route = useRoute()
 
 const isHome = computed(() => route.name === 'stations')
 const title = computed(() => (isHome.value ? 'Tides' : (route.meta.title as string) || 'Tides'))
+
+// Injected from package.json at build time, so bumping the version there is the only
+// edit needed. Shown only beside the app name — appending it to 'Settings' would read
+// as a version of that screen.
+const version = __APP_VERSION__
+const showVersion = computed(() => title.value === 'Tides')
 </script>
 
 <template>
@@ -27,7 +33,13 @@ const title = computed(() => (isHome.value ? 'Tides' : (route.meta.title as stri
         <PhArrowLeft />
       </Button>
 
-      <h1 class="flex-1 truncate text-lg font-semibold">{{ title }}</h1>
+      <h1 class="flex min-w-0 flex-1 items-baseline gap-1.5 text-lg font-semibold">
+        <span class="truncate">{{ title }}</span>
+        <span
+          v-if="showVersion"
+          class="shrink-0 text-xs font-normal tabular-nums text-muted-foreground"
+        >{{ version }}</span>
+      </h1>
 
       <Button
         v-if="route.name !== 'settings'"
