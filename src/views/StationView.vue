@@ -87,7 +87,7 @@ const staleNotice = computed(() => {
         </p>
       </div>
       <Button
-        variant="ghost"
+        variant="outline"
         size="icon"
         aria-label="Edit station"
         :as="RouterLink"

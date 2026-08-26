@@ -16,7 +16,7 @@ const title = computed(() => (isHome.value ? 'Tides' : (route.meta.title as stri
     <div class="mx-auto flex h-14 w-full max-w-3xl items-center gap-2 px-4">
       <Button
         v-if="!isHome"
-        variant="ghost"
+        variant="outline"
         size="icon"
         aria-label="Back to stations"
         :as="RouterLink"
@@ -29,7 +29,7 @@ const title = computed(() => (isHome.value ? 'Tides' : (route.meta.title as stri
 
       <Button
         v-if="route.name !== 'settings'"
-        variant="ghost"
+        variant="outline"
         size="icon"
         aria-label="Settings"
         :as="RouterLink"
