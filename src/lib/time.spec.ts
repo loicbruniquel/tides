@@ -82,6 +82,18 @@ describe('todayInZone', () => {
     expect(todayInZone('Africa/Casablanca')).toBe('2026-08-27')
     expect(todayInZone('America/New_York')).toBe('2026-08-26')
   })
+
+  // The `at` argument is what lets a component derive the day from the shared clock,
+  // so that the day cursor rolls over instead of freezing at first render.
+  it('reads an explicit instant rather than the system clock', () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2026-08-26T23:30:00Z'))
+
+    const later = Date.parse('2026-08-28T10:00:00Z')
+
+    expect(todayInZone('UTC', later)).toBe('2026-08-28')
+    expect(todayInZone('UTC', new Date(later))).toBe('2026-08-28')
+  })
 })
 
 describe('middayUtc', () => {

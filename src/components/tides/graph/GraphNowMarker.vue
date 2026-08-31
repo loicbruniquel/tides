@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { computed, onScopeDispose, ref } from 'vue'
+import { computed } from 'vue'
+
+import { useNow } from '@/composables/useNow'
 
 import GraphVerticalLine from './GraphVerticalLine.vue'
 
@@ -9,13 +11,13 @@ const props = defineProps<{
   dayEnd: number
 }>()
 
-const now = ref(Date.now() / 1000)
-
-const timer = window.setInterval(() => {
-  now.value = Date.now() / 1000
-}, 30_000)
-
-onScopeDispose(() => window.clearInterval(timer))
+/**
+ * The shared clock, not a private `setInterval`. A backgrounded PWA has its timers
+ * frozen, so an interval of our own left the marker wherever it stood when the page
+ * was suspended — pointing at yesterday after an overnight resume. `useNow` re-reads
+ * the wall clock on every resume signal as well as on a tick.
+ */
+const now = useNow()
 
 /** Null when "now" falls outside the displayed day, which hides the marker. */
 const x = computed(() => {

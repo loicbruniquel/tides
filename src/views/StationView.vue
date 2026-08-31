@@ -7,36 +7,49 @@ import { RouterLink, useRoute, useRouter } from 'vue-router'
 import DateControl from '@/components/tides/DateControl.vue'
 import TideGraph from '@/components/tides/TideGraph.vue'
 import Button from '@/components/ui/Button.vue'
+import { useNow } from '@/composables/useNow'
 import { useOnline } from '@/composables/useOnline'
 import { prefetchStationDays, useTideDay } from '@/composables/useTides'
 import { addDays, formatRelative, middayUtc, timeZoneFor, todayInZone } from '@/lib/time'
 import { useSettingsStore } from '@/stores/settings'
 import { useStationsStore } from '@/stores/stations'
+import type { IsoDay } from '@/types'
 
 const route = useRoute()
 const router = useRouter()
 const stations = useStationsStore()
 const settings = useSettingsStore()
 const online = useOnline()
+const now = useNow()
 
 const station = computed(() => stations.byId(String(route.params.id)))
 
 const timeZone = computed(() =>
   station.value ? timeZoneFor(station.value.latitude, station.value.longitude) : 'UTC',
 )
-const today = computed(() => todayInZone(timeZone.value))
 
-const day = ref(todayInZone(timeZone.value))
+// Derived from the shared clock, so it survives midnight and — more to the point — an
+// overnight PWA resume, where the page is restored rather than reloaded and `setup`
+// never runs again.
+const today = computed(() => todayInZone(timeZone.value, now.value * 1000))
+
+const day = ref<IsoDay>(today.value)
 
 // A station that no longer exists (deleted on another tab, or a stale deep link).
 watch(
   station,
   (current) => {
     if (!current) void router.replace('/')
-    else day.value = todayInZone(timeZoneFor(current.latitude, current.longitude))
+    else day.value = today.value
   },
   { immediate: true },
 )
+
+// Carry the cursor across the date boundary, but only while it is parked on today:
+// someone who deliberately flipped to another day keeps the day they chose.
+watch(today, (current, previous) => {
+  if (day.value === previous) day.value = current
+})
 
 const { data, isFetching, isError, isPaused, dataUpdatedAt } = useTideDay(
   () => station.value,

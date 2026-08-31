@@ -20,11 +20,13 @@ const props = defineProps<{ station: Station }>()
 
 const emit = defineEmits<{ move: [delta: number] }>()
 
-const timeZone = computed(() => timeZoneFor(props.station.latitude, props.station.longitude))
-const today = computed(() => todayInZone(timeZone.value))
-const tomorrow = computed(() => addDays(today.value, 1))
-
 const now = useNow()
+
+const timeZone = computed(() => timeZoneFor(props.station.latitude, props.station.longitude))
+// Off the shared clock, so a card left open past midnight (or a PWA resumed the next
+// morning) queries the new day instead of staying on the one it mounted with.
+const today = computed(() => todayInZone(timeZone.value, now.value * 1000))
+const tomorrow = computed(() => addDays(today.value, 1))
 
 // Cached-first: with data in IndexedDB this renders instantly and offline.
 const { data, isPaused } = useTideDay(

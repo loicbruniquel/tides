@@ -32,7 +32,7 @@ npm run build      # vue-tsc --noEmit && vite build → dist/
 npm run preview    # serve the built app; needed to exercise the service worker
 npm run check      # vue-tsc + eslint, must be clean
 npm run lint       # eslint --fix
-npm run test       # vitest (37 tests)
+npm run test       # vitest (38 tests)
 ```
 
 The service worker is inactive under `dev`. Use `build` + `preview` to test install and

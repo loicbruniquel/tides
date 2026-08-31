@@ -44,15 +44,22 @@ export function formatTime(dt: number, timeZone: string): string {
   }).format(new Date(dt * 1000))
 }
 
-/** Today's calendar date *at the station*, as `YYYY-MM-DD`. */
-export function todayInZone(timeZone: string): IsoDay {
+/**
+ * Today's calendar date *at the station*, as `YYYY-MM-DD`.
+ *
+ * `at` exists so callers can derive the day from a reactive clock. Defaulting it to
+ * `Date.now()` makes the result invisible to Vue's reactivity, which froze the day
+ * cursor — and the "now" marker with it — at whatever the date was when the component
+ * first rendered. Pass the shared clock from `useNow()` to get a day that rolls over.
+ */
+export function todayInZone(timeZone: string, at: Date | number = Date.now()): IsoDay {
   // en-CA renders ISO-ordered dates, which is exactly the shape the API wants.
   return new Intl.DateTimeFormat('en-CA', {
     timeZone,
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
-  }).format(new Date())
+  }).format(at)
 }
 
 /** Shifts an ISO day by whole days. Pure UTC arithmetic, so DST can never bite. */

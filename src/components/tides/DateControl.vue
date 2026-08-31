@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { PhArrowLeft, PhArrowRight, PhCalendarBlank } from '@phosphor-icons/vue'
+import { PhArrowLeft, PhArrowRight, PhCalendarBlank, PhCalendarDot } from '@phosphor-icons/vue'
 import { PopoverContent, PopoverPortal, PopoverRoot, PopoverTrigger } from 'reka-ui'
 import { computed, ref } from 'vue'
 
@@ -41,6 +41,8 @@ function select(day: IsoDay) {
   emit('update:modelValue', day)
   open.value = false
 }
+
+const isToday = computed(() => props.modelValue === props.today)
 </script>
 
 <template>
@@ -80,6 +82,19 @@ function select(day: IsoDay) {
         </PopoverContent>
       </PopoverPortal>
     </PopoverRoot>
+
+    <!-- Only while it has something to do. Four permanent size-12 buttons squeeze the
+         date label past the point where it fits on a phone, and the button is dead
+         weight on the day it would return you to. -->
+    <Button
+      v-if="!isToday"
+      variant="outline"
+      class="h-12 shrink-0 gap-1.5 px-4 text-sm font-semibold"
+      @click="emit('update:modelValue', today)"
+    >
+      <PhCalendarDot class="text-muted-foreground" />
+      Today
+    </Button>
 
     <Button variant="outline" size="icon" class="size-12 shrink-0" aria-label="Next day" @click="shift(1)">
       <PhArrowRight />
